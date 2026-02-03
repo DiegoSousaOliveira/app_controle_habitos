@@ -1,0 +1,46 @@
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.apk
+*.aar
+*.jks
+*.p8
+Podfile.lock
+Pods/
+Flutter/Flutter.podspec
+Flutter/Flutter-Debug.xcconfig
+Flutter/Flutter-Release.xcconfig
+Flutter/ephemeral/
+.gradle
+gradlew
+gradlew.bat
+local.properties
+KeyStore
+*.keystore
+coverage/
+android/.gradle
+android/local.properties
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.DS_Store
+.env
+.env.local
+
+# System
+Thumbs.db
+Desktop.ini
+
+# Dependencies
+pubspec.lock
