@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/api_exceptions.dart';
+import '../../widgets/app_bottom_nav_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController _emailController;
   final _formKey = GlobalKey<FormState>();
   bool _isEditing = false;
+  int _selectedNavIndex = 2;
 
   @override
   void initState() {
@@ -225,6 +227,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           },
         ),
+      ),
+      bottomNavigationBar: AppBottomNavBar(
+        currentIndex: _selectedNavIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedNavIndex = index;
+          });
+        },
       ),
     );
   }

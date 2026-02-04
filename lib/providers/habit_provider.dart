@@ -37,6 +37,8 @@ class HabitProvider extends ChangeNotifier {
     required String frequency,
     required int points,
     required bool active,
+    int? customFrequencyDays,
+    String? customFrequencyType,
   }) async {
     _setLoading(true);
     _errorMessage = null;
@@ -49,6 +51,8 @@ class HabitProvider extends ChangeNotifier {
         frequency: frequency,
         points: points,
         active: active,
+        customFrequencyDays: customFrequencyDays,
+        customFrequencyType: customFrequencyType,
       );
       _habits.add(habit);
       _setLoading(false);
@@ -69,6 +73,8 @@ class HabitProvider extends ChangeNotifier {
     required String frequency,
     required int points,
     required bool active,
+    int? customFrequencyDays,
+    String? customFrequencyType,
   }) async {
     _setLoading(true);
     _errorMessage = null;
@@ -82,6 +88,8 @@ class HabitProvider extends ChangeNotifier {
         frequency: frequency,
         points: points,
         active: active,
+        customFrequencyDays: customFrequencyDays,
+        customFrequencyType: customFrequencyType,
       );
 
       final index = _habits.indexWhere((h) => h.id == habitId);

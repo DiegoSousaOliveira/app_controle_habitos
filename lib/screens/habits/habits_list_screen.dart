@@ -6,6 +6,7 @@ import '../../providers/habit_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/api_exceptions.dart';
 import '../../widgets/common_widgets.dart';
+import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/habit_card.dart';
 
 class HabitsListScreen extends StatefulWidget {
@@ -16,6 +17,8 @@ class HabitsListScreen extends StatefulWidget {
 }
 
 class _HabitsListScreenState extends State<HabitsListScreen> {
+  int _selectedNavIndex = 1;
+
   @override
   void initState() {
     super.initState();
@@ -70,10 +73,10 @@ class _HabitsListScreenState extends State<HabitsListScreen> {
                   points: habit.points,
                   active: habit.active,
                   onTap: () {
-                    // TODO: Navigate to habit details
+                    // Navigate to habit details
                   },
                   onEdit: () {
-                    // TODO: Navigate to edit habit
+                    context.go('/habits/edit/${habit.id}', extra: habit);
                   },
                   onDelete: () {
                     _showDeleteConfirmation(
@@ -93,6 +96,14 @@ class _HabitsListScreenState extends State<HabitsListScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.go('/habits/create'),
         child: const Icon(Icons.add),
+      ),
+      bottomNavigationBar: AppBottomNavBar(
+        currentIndex: _selectedNavIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedNavIndex = index;
+          });
+        },
       ),
     );
   }

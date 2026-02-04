@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../models/habit.dart';
 import '../providers/auth_provider.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/habits/habits_list_screen.dart';
 import '../screens/habits/create_habit_screen.dart';
-import '../screens/stats/stats_screen.dart';
+import '../screens/habits/edit_habit_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/splash_screen.dart';
 
@@ -57,8 +58,14 @@ class AppRouter {
         builder: (context, state) => const CreateHabitScreen(),
       ),
       GoRoute(
-        path: '/stats',
-        builder: (context, state) => const StatsScreen(),
+        path: '/habits/edit/:id',
+        builder: (context, state) {
+          final habit = state.extra as Habit?;
+          if (habit == null) {
+            return const SizedBox.shrink();
+          }
+          return EditHabitScreen(habit: habit);
+        },
       ),
       GoRoute(
         path: '/profile',

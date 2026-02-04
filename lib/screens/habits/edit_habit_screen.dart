@@ -1,29 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../models/habit.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/habit_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/api_exceptions.dart';
 import '../../widgets/common_widgets.dart';
 
-class CreateHabitScreen extends StatefulWidget {
-  const CreateHabitScreen({Key? key}) : super(key: key);
+class EditHabitScreen extends StatefulWidget {
+  final Habit habit;
+
+  const EditHabitScreen({
+    Key? key,
+    required this.habit,
+  }) : super(key: key);
 
   @override
-  State<CreateHabitScreen> createState() => _CreateHabitScreenState();
+  State<EditHabitScreen> createState() => _EditHabitScreenState();
 }
 
-class _CreateHabitScreenState extends State<CreateHabitScreen> {
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _pointsController = TextEditingController(text: '10');
-  final _customFrequencyDaysController = TextEditingController();
+class _EditHabitScreenState extends State<EditHabitScreen> {
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _pointsController;
+  late TextEditingController _customFrequencyDaysController;
   final _formKey = GlobalKey<FormState>();
 
-  String _selectedFrequency = 'daily';
-  String _customFrequencyType = 'days';
-  bool _isActive = true;
+  late String _selectedFrequency;
+  late String _customFrequencyType;
+  late bool _isActive;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.habit.title);
+    _descriptionController =
+        TextEditingController(text: widget.habit.description ?? '');
+    _pointsController =
+        TextEditingController(text: widget.habit.points.toString());
+    _customFrequencyDaysController = TextEditingController(
+      text: widget.habit.customFrequencyDays?.toString() ?? '',
+    );
+    _selectedFrequency = widget.habit.frequency;
+    _customFrequencyType = widget.habit.customFrequencyType ?? 'days';
+    _isActive = widget.habit.active;
+  }
 
   @override
   void dispose() {
@@ -34,7 +56,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
     super.dispose();
   }
 
-  Future<void> _handleCreateHabit() async {
+  Future<void> _handleUpdateHabit() async {
     if (!_formKey.currentState!.validate()) return;
 
     final authProvider = context.read<AuthProvider>();
@@ -56,8 +78,9 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
         customType = _customFrequencyType;
       }
 
-      await habitProvider.createHabit(
+      await habitProvider.updateHabit(
         token: authProvider.token!,
+        habitId: widget.habit.id!,
         title: _titleController.text.trim(),
         description: _descriptionController.text.isEmpty
             ? null
@@ -71,7 +94,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hábito criado com sucesso')),
+        const SnackBar(content: Text('Hábito atualizado com sucesso')),
       );
       context.go('/habits');
     } on ApiException catch (e) {
@@ -86,7 +109,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Criar Novo Hábito'),
+        title: const Text('Editar Hábito'),
         elevation: 1,
         backgroundColor: Colors.white,
       ),
@@ -268,7 +291,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       ElevatedButton(
-                        onPressed: habitProvider.isLoading ? null : _handleCreateHabit,
+                        onPressed: habitProvider.isLoading ? null : _handleUpdateHabit,
                         child: habitProvider.isLoading
                             ? const SizedBox(
                                 height: 20,
@@ -279,7 +302,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
                                       AlwaysStoppedAnimation<Color>(Colors.white),
                                 ),
                               )
-                            : const Text('Criar Hábito'),
+                            : const Text('Atualizar Hábito'),
                       ),
                       const SizedBox(height: 12),
                       OutlinedButton(

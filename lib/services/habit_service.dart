@@ -47,27 +47,27 @@ class HabitService {
     required String frequency,
     required int points,
     required bool active,
+    int? customFrequencyDays,
+    String? customFrequencyType,
   }) async {
     try {
-      ApiLogger.logRequest('POST', '/habits', {
+      final requestData = {
         'title': title,
         'description': description,
         'frequency': frequency,
         'points': points,
         'active': active,
-      });
+        if (customFrequencyDays != null) 'custom_frequency_days': customFrequencyDays,
+        if (customFrequencyType != null) 'custom_frequency_type': customFrequencyType,
+      };
+
+      ApiLogger.logRequest('POST', '/habits', requestData);
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       
       final response = await _dio.post(
         '/habits',
-        data: {
-          'title': title,
-          'description': description,
-          'frequency': frequency,
-          'points': points,
-          'active': active,
-        },
+        data: requestData,
       );
 
       ApiLogger.logResponse('/habits', response.statusCode ?? 0, response.data);
@@ -112,27 +112,27 @@ class HabitService {
     required String frequency,
     required int points,
     required bool active,
+    int? customFrequencyDays,
+    String? customFrequencyType,
   }) async {
     try {
-      ApiLogger.logRequest('PUT', '/habits/$habitId', {
+      final requestData = {
         'title': title,
         'description': description,
         'frequency': frequency,
         'points': points,
         'active': active,
-      });
+        if (customFrequencyDays != null) 'custom_frequency_days': customFrequencyDays,
+        if (customFrequencyType != null) 'custom_frequency_type': customFrequencyType,
+      };
+
+      ApiLogger.logRequest('PUT', '/habits/$habitId', requestData);
 
       _dio.options.headers['Authorization'] = 'Bearer $token';
       
       final response = await _dio.put(
         '/habits/$habitId',
-        data: {
-          'title': title,
-          'description': description,
-          'frequency': frequency,
-          'points': points,
-          'active': active,
-        },
+        data: requestData,
       );
 
       ApiLogger.logResponse('/habits/$habitId', response.statusCode ?? 0, response.data);

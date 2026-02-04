@@ -4,6 +4,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/stats_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common_widgets.dart';
+import '../../widgets/app_bottom_nav_bar.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({Key? key}) : super(key: key);
@@ -13,6 +14,8 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> {
+  int _selectedNavIndex = 2;
+
   @override
   void initState() {
     super.initState();
@@ -177,6 +180,14 @@ class _StatsScreenState extends State<StatsScreen> {
               ),
             ),
           );
+        },
+      ),
+      bottomNavigationBar: AppBottomNavBar(
+        currentIndex: _selectedNavIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedNavIndex = index;
+          });
         },
       ),
     );

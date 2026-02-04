@@ -6,6 +6,7 @@ import '../../providers/habit_provider.dart';
 import '../../providers/stats_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common_widgets.dart';
+import '../../widgets/app_bottom_nav_bar.dart';
 import '../../widgets/habit_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  int _selectedNavIndex = 0;
 
   @override
   void initState() {
@@ -47,31 +48,19 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 1,
         backgroundColor: Colors.white,
       ),
-      body: _selectedIndex == 0 ? _buildHomeView() : _buildProfileView(),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+      body: _buildHomeView(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.go('/habits/create'),
+        child: const Icon(Icons.add),
+      ),
+      bottomNavigationBar: AppBottomNavBar(
+        currentIndex: _selectedNavIndex,
         onTap: (index) {
           setState(() {
-            _selectedIndex = index;
+            _selectedNavIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
       ),
-      floatingActionButton: _selectedIndex == 0
-          ? FloatingActionButton(
-              onPressed: () => context.go('/habits/create'),
-              child: const Icon(Icons.add),
-            )
-          : null,
     );
   }
 
@@ -119,52 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              Text(
-                'Seu Progresso',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
-              Consumer<StatsProvider>(
-                builder: (context, statsProvider, child) {
-                  if (statsProvider.isLoading) {
-                    return LoadingWidget();
-                  }
-
-                  if (statsProvider.stats == null) {
-                    return const SizedBox.shrink();
-                  }
-
-                  final stats = statsProvider.stats!;
-                  return GridView.count(
-                    crossAxisCount: 3,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    children: [
-                      _StatCard(
-                        icon: Icons.star,
-                        label: 'Pontos',
-                        value: '${stats.totalPoints}',
-                        color: AppTheme.accentColor,
-                      ),
-                      _StatCard(
-                        icon: Icons.trending_up,
-                        label: 'Nível',
-                        value: '${stats.level}',
-                        color: Colors.orange,
-                      ),
-                      _StatCard(
-                        icon: Icons.local_fire_department,
-                        label: 'Streak',
-                        value: '${stats.streak}',
-                        color: Colors.red,
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
+              // ...removido barra de progresso...
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -197,6 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // Show only first 3 habits
                   final displayHabits = habitProvider.habits.take(3).toList();
+                  final authProvider = context.read<AuthProvider>();
                   return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -211,6 +156,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         points: habit.points,
                         active: habit.active,
                         onTap: () {},
+                        completed: habit.completed ?? false,
+                        onCompletedChanged: (checked) async {
+                          await context.read<HabitProvider>().logHabitCompletion(
+                            token: authProvider.token!,
+                            habitId: habit.id!,
+                            completed: checked ?? false,
+                          );
+                          // Atualizar estatísticas após marcar/desmarcar como concluído
+                          await context.read<StatsProvider>().loadStats(authProvider.token!);
+                        },
                       );
                     },
                   );
@@ -219,129 +174,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildProfileView() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Consumer<AuthProvider>(
-              builder: (context, authProvider, child) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppTheme.dividerColor),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      AppTheme.primaryColor,
-                                      AppTheme.primaryDark,
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.person,
-                                  color: Colors.white,
-                                  size: 30,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      authProvider.user?.name ?? 'Usuário',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge,
-                                    ),
-                                    Text(
-                                      authProvider.user?.email ?? '',
-                                      style:
-                                          Theme.of(context).textTheme.bodySmall,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () => context.go('/profile'),
-                            child: const Text('Editar Perfil'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Configurações',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 12),
-                    ListTile(
-                      title: const Text('Sair'),
-                      trailing: const Icon(Icons.logout),
-                      onTap: () {
-                        _showLogoutDialog(context);
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sair'),
-        content: const Text('Você tem certeza que deseja sair?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () async {
-              final authProvider = context.read<AuthProvider>();
-              await authProvider.logout();
-              if (mounted) {
-                context.go('/login');
-              }
-            },
-            child: const Text(
-              'Sair',
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
       ),
     );
   }
