@@ -61,6 +61,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _handleLogout() async {
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.logout();
+    if (!mounted) return;
+    context.go('/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,13 +165,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Text(
                           'Data de Cadastro',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           authProvider.user?.createdAt?.toString().split(' ').first ??
                               'Não disponível',
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),
                         ),
                       ],
                     ),
@@ -214,13 +221,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     )
                   else
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _isEditing = true;
-                        });
-                      },
-                      child: const Text('Editar Perfil'),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isEditing = true;
+                            });
+                          },
+                          child: const Text('Editar Perfil'),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: _handleLogout,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.dangerColor,
+                          ),
+                          child: const Text(
+                            'Sair da Conta',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
                     ),
                 ],
               ),

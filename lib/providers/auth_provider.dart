@@ -48,13 +48,13 @@ class AuthProvider extends ChangeNotifier {
 
       // Buscar dados completos do usuário após registro
       await _loadCurrentUser();
-      notifyListeners();
     } on ApiException catch (e) {
       _errorMessage = e.message;
       notifyListeners();
       rethrow;
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 
@@ -76,13 +76,13 @@ class AuthProvider extends ChangeNotifier {
       _authService.setAuthToken(_token!);
 
       await _loadCurrentUser();
-      notifyListeners();
     } on ApiException catch (e) {
       _errorMessage = e.message;
       notifyListeners();
       rethrow;
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 

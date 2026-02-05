@@ -126,6 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         TextFormField(
                           controller: _nameController,
+                          style: const TextStyle(color: Colors.black),
                           decoration: const InputDecoration(
                             labelText: 'Nome Completo',
                             hintText: 'João Silva',
@@ -142,6 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
+                          style: const TextStyle(color: Colors.black),
                           decoration: const InputDecoration(
                             labelText: 'Email',
                             hintText: 'seu@email.com',
@@ -161,6 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
+                          style: const TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             labelText: 'Senha',
                             hintText: '••••••••',
@@ -192,6 +195,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         TextFormField(
                           controller: _confirmPasswordController,
                           obscureText: _obscureConfirmPassword,
+                          style: const TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             labelText: 'Confirmar Senha',
                             hintText: '••••••••',

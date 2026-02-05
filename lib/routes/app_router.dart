@@ -27,7 +27,7 @@ class AppRouter {
 
       // If user is authenticated and on auth screen, redirect to home
       if (auth.isAuthenticated && isAuthScreen) {
-        return '/';
+        return '/home';
       }
 
       return null;

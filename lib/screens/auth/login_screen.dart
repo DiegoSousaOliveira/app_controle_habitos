@@ -122,6 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
+                          style: const TextStyle(color: Colors.black),
                           decoration: const InputDecoration(
                             labelText: 'Email',
                             hintText: 'seu@email.com',
@@ -141,6 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
+                          style: const TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             labelText: 'Senha',
                             hintText: '••••••••',
